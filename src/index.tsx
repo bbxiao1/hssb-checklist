@@ -13,7 +13,8 @@ let ships: Ship[] = rawShips.map((s: any, i) => {
     tasks: s.tasks.map((t: string, i: number) => {
       return {
         id: i,
-        text: t
+        text: t,
+        status: 'incomplete'
       }
     })
   }
