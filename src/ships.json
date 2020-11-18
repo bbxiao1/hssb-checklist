@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "name": "Mackerel",
+        "tasks": [
+            "Open all doors",
+            "Depressurize",
+            "Turn off engines/thruster",
+            "Cut off fuel flow",
+            "Nacelles",
+            "Thruster"
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Gecko",
+        "tasks": [
+            "Open all doors",
+            "Depressurize",
+            "Turn off engines/thruster",
+            "Cut off fuel flow",
+            "Nacelles",
+            "Thruster",
+            "Ensure reactor has clearance to barge",
+            "Pull coolant slowly",
+            "Cut pipe intersections under reactor"
+        ]
+    }
+]

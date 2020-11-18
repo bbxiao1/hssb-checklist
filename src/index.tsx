@@ -4,11 +4,22 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Ship from './models/Ship';
+import rawShips from './ships.json';
 
-let ships: Ship[] = [
-  {id: 1, name: "Mackerel"},
-  {id: 2, name: "Gecko"}
-]
+let ships: Ship[] = rawShips.map((s: any, i) => {
+  return {
+    id: i,
+    name: s.name,
+    tasks: s.tasks.map((t: string, i: number) => {
+      return {
+        id: i,
+        text: t
+      }
+    })
+  }
+})
+
+
 ReactDOM.render(
   <React.StrictMode>
     <App ships={ships}/>

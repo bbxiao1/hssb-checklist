@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
-import Ship from './models/Ship'
+import Ship from './models/Ship';
+import Task from './models/Task';
 
 type Props = {
   ships: Ship[];
@@ -38,7 +39,23 @@ interface ChecklistProps {
 }
 function Checklist(props: ChecklistProps) {
   if (props.ship) {
-    return <div className="no-ship">{props.ship.name}</div>
+    let tasks = props.ship.tasks.map((task: Task) => {
+      return (
+        <li
+          key={task.id}
+          className="list-group-item ship-list-name">
+            <div className="clicky" >
+              {task.text}
+            </div>
+        </li>
+      )
+    })
+    return (
+      <div className="ship">
+        <h3>{props.ship.name}</h3>
+        <ul>{tasks}</ul>
+      </div>
+    )
   } else {
     return <div className="no-ship">Please select a ship</div>
   }
