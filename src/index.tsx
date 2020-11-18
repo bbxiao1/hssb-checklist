@@ -3,10 +3,15 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Ship from './models/Ship';
 
+let ships: Ship[] = [
+  {id: 1, name: "Mackerel"},
+  {id: 2, name: "Gecko"}
+]
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App ships={ships}/>
   </React.StrictMode>,
   document.getElementById('root')
 );

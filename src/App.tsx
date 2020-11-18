@@ -1,61 +1,78 @@
 import React from 'react';
 import './App.css';
+import Ship from './models/Ship'
 
-interface Ship {
-  id: number,
-  name: string
+type Props = {
+  ships: Ship[];
 }
 
-function App() {
-  let ships: Ship[] = [
-    {id: 1, name: "Mackerel"},
-    {id: 2, name: "Gecko"}
-  ]
-  var selectedShip: Ship;
+type State = {
+  selectedShip: Ship | null;
+  didSelectShip: (ship: Ship) => void;
+}
 
-  const didSelectShip = (ship: Ship) => {
-    selectedShip = ship
-  }
+interface ShipListProps {
+  ships: Ship[];
+  didSelectShip: (ship: Ship) => void;
+}
 
-  let renderedShips = ships.map((ship) => {
+function ShipList(props: ShipListProps) {
+  let ships = props.ships.map((ship) => {
     return <li
-             key={ship.id}
-             className="list-group-item ship-list-name">
-               <div className="clicky" onClick={e => didSelectShip(ship) }>
-                 {ship.name}
-               </div>
-           </li>
+            key={ship.id}
+            className="list-group-item ship-list-name">
+              <div className="clicky" onClick={() => props.didSelectShip(ship) }>
+                {ship.name}
+              </div>
+          </li>
   })
+  return (
+    <ul className="list-group list-group-flush">
+      {ships}
+    </ul>
+  );
+}
 
-  let renderedChecklist = () => {
-    if (selectedShip) {
-      return <div className="no-ship">{selectedShip.name}</div>
-    } else {
-      return <div className="no-ship">Please select a ship</div>
+interface ChecklistProps {
+  ship: Ship | null;
+}
+function Checklist(props: ChecklistProps) {
+  if (props.ship) {
+    return <div className="no-ship">{props.ship.name}</div>
+  } else {
+    return <div className="no-ship">Please select a ship</div>
+  }
+}
+
+class App extends React.Component<Props, State> {
+  public readonly state: State = {
+    selectedShip: null,
+    didSelectShip: (ship: Ship) => {
+      this.setState({...this.state, selectedShip: ship});
     }
   }
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <h2>
-          Hardspace: Shipbreaker
-        </h2>
-      </header>
-      <div className="container">
-        <div className="row">
-          <div className="col-2">
-            <ul className="list-group list-group-flush">
-              {renderedShips}
-            </ul>
-          </div>
-          <div className="col">
-            {renderedChecklist()}
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <h2>
+            Hardspace: Shipbreaker
+          </h2>
+        </header>
+        <div className="container">
+          <div className="row">
+            <div className="col-2">
+              <ShipList ships={this.props.ships} didSelectShip={this.state.didSelectShip} />
+            </div>
+            <div className="col">
+              <Checklist ship={this.state.selectedShip} />
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default App;
