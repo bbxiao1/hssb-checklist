@@ -34,35 +34,64 @@ function ShipList(props: ShipListProps) {
   );
 }
 
-interface ChecklistProps {
+type ChecklistProps = {
   ship: Ship | null;
 }
-function Checklist(props: ChecklistProps) {
-  if (props.ship) {
-    let tasks = props.ship.tasks.map((task: Task) => {
-      return (
-        <li
-          key={task.id}
-          className="list-group-item ship-list-name">
-            <div className="clicky" >
+type ChecklistState = {
+  currentTask: Task | undefined;
+  didClickTask: (task: Task) => void;
+}
+class Checklist extends React.Component<ChecklistProps, ChecklistState> {
+  readonly state: ChecklistState = {
+    currentTask: this.props.ship?.tasks[0],
+    didClickTask: (task: Task) => {
+      task.status = 'complete';
+      let nextTask = this.props.ship?.tasks.find(t => t.id === task.id + 1)
+      this.setState({...this.state, currentTask: nextTask})
+    }
+  }
+
+  constructor(props: ChecklistProps) {
+    super(props)
+    this.state.currentTask = this.props.ship?.tasks[0]
+  }
+
+  render() {
+    if (this.props.ship) {
+      let tasks = this.props.ship.tasks.map((task: Task) => {
+        let taskContent;
+        if (task.id === this.state.currentTask?.id) {
+          taskContent = (
+            <div className='clicky' onClick={() => this.state.didClickTask(task) }>
               {task.text}
             </div>
-        </li>
+          )
+        } else if (task.status === 'complete') {
+          taskContent = (
+            <div className='strikethrough'>{task.text}</div>
+          )
+        }
+        return (
+          <li
+            key={task.id}
+            className="list-group-item ship-list-name">
+          </li>
+        )
+      })
+      return (
+        <div className="ship">
+          <h3>{this.props.ship.name}</h3>
+          <ul>{tasks}</ul>
+        </div>
       )
-    })
-    return (
-      <div className="ship">
-        <h3>{props.ship.name}</h3>
-        <ul>{tasks}</ul>
-      </div>
-    )
-  } else {
-    return <div className="no-ship">Please select a ship</div>
+    } else {
+      return <div className="no-ship">Please select a ship</div>
+    }
   }
 }
 
 class App extends React.Component<Props, State> {
-  public readonly state: State = {
+  readonly state: State = {
     selectedShip: null,
     didSelectShip: (ship: Ship) => {
       this.setState({...this.state, selectedShip: ship});
