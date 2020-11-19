@@ -3,15 +3,6 @@ import './App.css';
 import Ship from './models/Ship';
 import Task from './models/Task';
 
-type Props = {
-  ships: Ship[];
-}
-
-type State = {
-  selectedShip: Ship | null;
-  didSelectShip: (ship: Ship) => void;
-}
-
 interface ShipListProps {
   ships: Ship[];
   didSelectShip: (ship: Ship) => void;
@@ -35,70 +26,77 @@ function ShipList(props: ShipListProps) {
 }
 
 type ChecklistProps = {
-  ship: Ship | null;
+  ship: Ship;
+  currentTaskId: number;
+  didCompleteTask: (task: Task) => void;
 }
-type ChecklistState = {
-  currentTask: Task | undefined;
-  didClickTask: (task: Task) => void;
-}
-class Checklist extends React.Component<ChecklistProps, ChecklistState> {
-  readonly state: ChecklistState = {
-    currentTask: this.props.ship?.tasks[0],
-    didClickTask: (task: Task) => {
-      task.status = 'complete';
-      let nextTask = this.props.ship?.tasks.find(t => t.id === task.id + 1)
-      this.setState({...this.state, currentTask: nextTask})
-    }
-  }
-
-  constructor(props: ChecklistProps) {
-    super(props)
-    this.state.currentTask = this.props.ship?.tasks[0]
-  }
-
-  render() {
-    if (this.props.ship) {
-      let tasks = this.props.ship.tasks.map((task: Task) => {
-        let taskContent;
-        if (task.id === this.state.currentTask?.id) {
-          taskContent = (
-            <div className='clicky' onClick={() => this.state.didClickTask(task) }>
-              {task.text}
-            </div>
-          )
-        } else if (task.status === 'complete') {
-          taskContent = (
-            <div className='strikethrough'>{task.text}</div>
-          )
-        }
-        return (
-          <li
-            key={task.id}
-            className="list-group-item ship-list-name">
-          </li>
-        )
-      })
-      return (
-        <div className="ship">
-          <h3>{this.props.ship.name}</h3>
-          <ul>{tasks}</ul>
+function Checklist(props: ChecklistProps) {
+  let tasks = props.ship.tasks.map((task: Task) => {
+    let taskContent;
+    if (task.id === props.currentTaskId) {
+      taskContent = (
+        <div className='clicky' onClick={() => props.didCompleteTask(task) }>
+          {task.text}
         </div>
       )
     } else {
-      return <div className="no-ship">Please select a ship</div>
+      let className;
+      if (task.status === 'complete') { className = 'strikethrough'}
+      taskContent = (
+        <div className={className}>{task.text}</div>
+      )
     }
-  }
+    return (
+      <li
+        key={task.id}
+        className="list-group-item ship-list-name">
+          {taskContent}
+      </li>
+    )
+  })
+  return (
+    <div className="ship">
+      <h3>{props.ship.name}</h3>
+      <ul>{tasks}</ul>
+    </div>
+  )
+}
+
+type Props = {
+  ships: Ship[];
+}
+
+// TODO: ship to remove null
+type State = {
+  selectedShip: Ship | null;
+  currentTaskId: number | null;
+  didSelectShip: (ship: Ship) => void;
+  didCompleteTask: (task: Task) => void;
 }
 
 class App extends React.Component<Props, State> {
   readonly state: State = {
     selectedShip: null,
+    currentTaskId: null,
     didSelectShip: (ship: Ship) => {
-      this.setState({...this.state, selectedShip: ship});
+      this.setState({...this.state, selectedShip: ship, currentTaskId: ship.tasks[0].id});
+    },
+    didCompleteTask: (task: Task) => {
+      var nextTaskId: number | null = (this.state.currentTaskId || 0) + 1
+      let matchingTask = this.state.selectedShip?.tasks.find(t => t.id === nextTaskId);
+      if (!matchingTask) { nextTaskId = null }
+      this.setState({...this.state, currentTaskId: nextTaskId});
     }
   }
 
   render() {
+    let checklistSection;
+    if (this.state.selectedShip && this.state.currentTaskId !== null) {
+      checklistSection = <Checklist ship={this.state.selectedShip} currentTaskId={this.state.currentTaskId} didCompleteTask={this.state.didCompleteTask}/>
+    } else {
+      checklistSection = <div className="no-ship">Please select a ship</div>
+    }
+
     return (
       <div className="App">
         <header className="App-header">
@@ -112,7 +110,7 @@ class App extends React.Component<Props, State> {
               <ShipList ships={this.props.ships} didSelectShip={this.state.didSelectShip} />
             </div>
             <div className="col">
-              <Checklist ship={this.state.selectedShip} />
+              {checklistSection}
             </div>
           </div>
         </div>
