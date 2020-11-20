@@ -1,8 +1,8 @@
-import React from 'react';
-import './App.css';
-import Ship from './models/Ship';
-import ShipList from './views/ShipList';
-import ChecklistContainer from './views/ChecklistContainer';
+import React from 'react'
+import './App.css'
+import Ship from './models/Ship'
+import ShipList from './views/ShipList'
+import ChecklistContainer from './views/ChecklistContainer'
 
 type Props = {
   ships: Ship[];
@@ -17,12 +17,12 @@ class App extends React.Component<Props, State> {
   readonly state: State = {
     selectedShip: null,
     didSelectShip: (ship: Ship) => {
-      this.setState({...this.state, selectedShip: ship});
+      this.setState({ ...this.state, selectedShip: ship })
     }
   }
 
-  render() {
-    let checklistSection;
+  render () {
+    let checklistSection
     if (this.state.selectedShip) {
       checklistSection = <ChecklistContainer selectedShip={this.state.selectedShip} />
     } else {
@@ -47,8 +47,8 @@ class App extends React.Component<Props, State> {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App

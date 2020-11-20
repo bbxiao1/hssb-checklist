@@ -1,14 +1,14 @@
-import React from 'react';
-import { fireEvent, getByLabelText, render, screen } from '@testing-library/react';
-import Ship from '../models/Ship';
-import { ShipBuilder } from '../Utils';
+import React from 'react'
+import { fireEvent, render } from '@testing-library/react'
+import Ship from '../models/Ship'
+import { ShipBuilder } from '../Utils'
 
-import ChecklistContainer from '../views/ChecklistContainer';
+import ChecklistContainer from '../views/ChecklistContainer'
 
-let ship: Ship;
+let ship: Ship
 
 beforeEach(() => {
-  ship = ShipBuilder.build();
+  ship = ShipBuilder.build()
 })
 
 test('initialization starts first task', () => {
@@ -17,7 +17,7 @@ test('initialization starts first task', () => {
   render(<ChecklistContainer selectedShip={ship} />)
 
   expect(ship.tasks[0].status).toEqual('in-progress')
-});
+})
 
 test('clicking on the in-progress task completes it and moves on to the next task', () => {
   const { getByText } = render(<ChecklistContainer selectedShip={ship} />)

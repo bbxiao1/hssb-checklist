@@ -6,4 +6,4 @@ interface Ship {
     tasks: Task[];
 }
 
-export default Ship;
+export default Ship
