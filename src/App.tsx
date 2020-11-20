@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import Ship from './models/Ship';
-import Task from './models/Task';
+import { Status, Task } from './models/Task';
 
 interface ShipListProps {
   ships: Ship[];
@@ -25,27 +25,28 @@ function ShipList(props: ShipListProps) {
   );
 }
 
+
 type ChecklistProps = {
   ship: Ship;
   currentTaskId: number;
   didCompleteTask: (task: Task) => void;
 }
-function Checklist(props: ChecklistProps) {
-  let tasks = props.ship.tasks.map((task: Task) => {
+
+function renderGrouping(tasks: Task[], props?: ChecklistProps) {
+  return tasks.map((task: Task) => {
     let taskContent;
-    if (task.id === props.currentTaskId) {
+    if (task.status === 'in-progress' && props) {
       taskContent = (
-        <div className='clicky' onClick={() => props.didCompleteTask(task) }>
+        <div className='in-progress' onClick={() => props.didCompleteTask(task) }>
           {task.text}
         </div>
       )
     } else {
-      let className;
-      if (task.status === 'complete') { className = 'strikethrough'}
       taskContent = (
-        <div className={className}>{task.text}</div>
+        <div className={task.status}>{task.text}</div>
       )
     }
+
     return (
       <li
         key={task.id}
@@ -54,10 +55,25 @@ function Checklist(props: ChecklistProps) {
       </li>
     )
   })
+}
+
+function Checklist(props: ChecklistProps) {
+  let groupedTasks: {[key in Status]: Task[]} = {
+    'complete': [],
+    'in-progress': [],
+    'incomplete': []
+  }
+  groupedTasks = props.ship.tasks.reduce((group, t) => {
+    group[t.status].push(t)
+    return group
+  }, groupedTasks)
+
   return (
     <div className="ship">
       <h3>{props.ship.name}</h3>
-      <ul>{tasks}</ul>
+      <ul>{renderGrouping(groupedTasks['complete'])}</ul>
+      <ul>{renderGrouping(groupedTasks['in-progress'], props)}</ul>
+      <ul>{renderGrouping(groupedTasks['incomplete'])}</ul>
     </div>
   )
 }
@@ -67,6 +83,7 @@ type ChecklistContainerProps = {
 }
 
 type ChecklistContainerState = {
+  tasks: Task[];
   currentTaskId: number;
   didCompleteTask: (task: Task) => void;
   shipComplete: boolean;
@@ -75,15 +92,29 @@ type ChecklistContainerState = {
 class ChecklistContainer extends React.Component<ChecklistContainerProps, ChecklistContainerState> {
   constructor(props: ChecklistContainerProps) {
     super(props)
+
+    let newTasks = [...props.selectedShip.tasks]
+    newTasks[0].status = 'in-progress'
     this.state = {
-      currentTaskId: props.selectedShip.tasks[0].id,
-      didCompleteTask: (task: Task) => {
-        var nextTaskId = (this.state.currentTaskId || 0) + 1
-        let matchingTask = this.props.selectedShip.tasks.find(t => t.id === nextTaskId);
+      tasks: newTasks,
+      currentTaskId: newTasks[0].id,
+      didCompleteTask: (completedTask: Task) => {
+        const nextTaskId = this.state.currentTaskId + 1
+        let matchingTask;
+
+        let tasks = this.state.tasks.map((t) => {
+          if (t.id === completedTask.id) { t.status = 'complete' }
+          if (t.id === nextTaskId) {
+            matchingTask = t
+            matchingTask.status = 'in-progress'
+          }
+          return t
+        })
+
         if (matchingTask) {
-          this.setState({...this.state, currentTaskId: nextTaskId});
+          this.setState({...this.state, tasks: tasks, currentTaskId: nextTaskId});
         } else {
-          this.setState({...this.state, shipComplete: true});
+          this.setState({...this.state, tasks: tasks, shipComplete: true});
         }
       },
       shipComplete: false

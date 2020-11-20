@@ -16,5 +16,20 @@
   cursor: pointer;
 }
 
-.strikethrough {
+.ship-list-name {
+  text-align: left;
+}
+
+.complete {
+  text-decoration: line-through;
+  text-decoration-color: gray;
+  color: gray;
+}
+
+.in-progress {
+  cursor: pointer;
+  color: green;
+}
+
+.incomplete {
 }
