@@ -1,6 +1,12 @@
 # Hardspace: Shipbreaker Checklist
 A checklist for the game so I can dis-assemble and chill.
 
+
+## In Progress
+- Better styling between different task statuses
+- Linting
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
