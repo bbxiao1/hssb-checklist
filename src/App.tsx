@@ -62,37 +62,64 @@ function Checklist(props: ChecklistProps) {
   )
 }
 
+type ChecklistContainerProps = {
+  selectedShip: Ship;
+}
+
+type ChecklistContainerState = {
+  currentTaskId: number;
+  didCompleteTask: (task: Task) => void;
+  shipComplete: boolean;
+}
+
+class ChecklistContainer extends React.Component<ChecklistContainerProps, ChecklistContainerState> {
+  constructor(props: ChecklistContainerProps) {
+    super(props)
+    this.state = {
+      currentTaskId: props.selectedShip.tasks[0].id,
+      didCompleteTask: (task: Task) => {
+        var nextTaskId = (this.state.currentTaskId || 0) + 1
+        let matchingTask = this.props.selectedShip.tasks.find(t => t.id === nextTaskId);
+        if (matchingTask) {
+          this.setState({...this.state, currentTaskId: nextTaskId});
+        } else {
+          this.setState({...this.state, shipComplete: true});
+        }
+      },
+      shipComplete: false
+    }
+  }
+
+  render() {
+    return (
+      <div className="col">
+        <Checklist ship={this.props.selectedShip} currentTaskId={this.state.currentTaskId} didCompleteTask={this.state.didCompleteTask}/>
+      </div>
+    )
+  }
+}
+
 type Props = {
   ships: Ship[];
 }
 
-// TODO: ship to remove null
 type State = {
   selectedShip: Ship | null;
-  currentTaskId: number | null;
   didSelectShip: (ship: Ship) => void;
-  didCompleteTask: (task: Task) => void;
 }
 
 class App extends React.Component<Props, State> {
   readonly state: State = {
     selectedShip: null,
-    currentTaskId: null,
     didSelectShip: (ship: Ship) => {
-      this.setState({...this.state, selectedShip: ship, currentTaskId: ship.tasks[0].id});
-    },
-    didCompleteTask: (task: Task) => {
-      var nextTaskId: number | null = (this.state.currentTaskId || 0) + 1
-      let matchingTask = this.state.selectedShip?.tasks.find(t => t.id === nextTaskId);
-      if (!matchingTask) { nextTaskId = null }
-      this.setState({...this.state, currentTaskId: nextTaskId});
+      this.setState({...this.state, selectedShip: ship});
     }
   }
 
   render() {
     let checklistSection;
-    if (this.state.selectedShip && this.state.currentTaskId !== null) {
-      checklistSection = <Checklist ship={this.state.selectedShip} currentTaskId={this.state.currentTaskId} didCompleteTask={this.state.didCompleteTask}/>
+    if (this.state.selectedShip) {
+      checklistSection = <ChecklistContainer selectedShip={this.state.selectedShip} />
     } else {
       checklistSection = <div className="no-ship">Please select a ship</div>
     }
