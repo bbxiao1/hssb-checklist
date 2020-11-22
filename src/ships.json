@@ -5,9 +5,9 @@
         "tasks": [
             "Open all doors",
             "Depressurize",
+            "Nacelles",
             "Turn off engines/thruster",
             "Cut off fuel flow",
-            "Nacelles",
             "Thruster"
         ]
     },
@@ -15,15 +15,17 @@
         "id": 2,
         "name": "Gecko",
         "tasks": [
+            "Scan for utility key",
             "Open all doors",
             "Depressurize",
-            "Turn off engines/thruster",
             "Cut off fuel flow",
             "Nacelles",
             "Thruster",
             "Ensure reactor has clearance to barge",
-            "Pull coolant slowly",
-            "Cut pipe intersections under reactor"
+            "Cut and pull reactor brackets",
+            "Cut reactor fuel pipe intersection",
+            "Pull coolant tanks from ECU",
+            "Cut long coolant pipe under reactor"
         ]
     }
 ]
