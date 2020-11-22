@@ -1,9 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
+import Ship from './models/Ship';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
+test('prompts to select a ship by default', () => {
+  let ships: Ship[] = [];
+  render(<App ships={ships}/>);
+  const linkElement = screen.getByText(/Please select a ship/i);
   expect(linkElement).toBeInTheDocument();
 });
