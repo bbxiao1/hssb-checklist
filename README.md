@@ -6,7 +6,7 @@ https://gallant-wiles-1507bb.netlify.app/
 ## In Progress
 - Better styling between different task statuses
 - Linting
-
+- Do something when the ship is complete
 
 # Getting Started with Create React App
 
